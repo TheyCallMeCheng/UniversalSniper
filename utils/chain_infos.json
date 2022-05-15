@@ -1,0 +1,37 @@
+
+{
+    "ETH": {
+        "name": "Ethereum",
+        "RPC": "https://mainnet.infura.io/v3/",
+        "Backup-RPC": "https://mainnet.infura.io/v3/",
+        "Exchanges": {
+            "UniV2":{
+                "abi":"./utils/abis/uni_abi.json",
+                "contract": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+            },
+            "Sushi":{
+                "abi":"./utils/abis/sushi_abi.json",
+                "contract": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F"
+            },
+            "UniV3":{
+                "abi":"./utils/abis/uniV3_abi.json",
+                "contract": "/"
+            }
+        }
+    },
+    "AVAX": {
+        "name": "Avalanche",
+        "RPC": "https://api.avax.network/ext/bc/C/rpc",
+        "Backup-RPC": "https://api.avax.network/ext/bc/C/rpc",
+        "Exchanges": {
+            "tj":{
+                "abi":"./utils/abis/tj_abi.json",
+                "contract": "0x60aE616a2155Ee3d9A68541Ba4544862310933d4"
+            },
+            "Sushi":{
+                "abi":"./utils/abis/sushi_abi.json",
+                "contract": ""
+            }
+        }
+    }
+}
