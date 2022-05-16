@@ -19,6 +19,17 @@
             }
         }
     },
+    "RETH": {
+        "name": "Ethereum Rinkeby testnet",
+        "RPC": "https://eth-rinkeby.alchemyapi.io/v2/qqRGZbmWFrq-JdCqYI2avk1tMjtkZ_Dv",
+        "Backup-RPC": "https://eth-rinkeby.alchemyapi.io/v2/qqRGZbmWFrq-JdCqYI2avk1tMjtkZ_Dv",
+        "Exchanges": {
+            "UniV2":{
+                "abi":"./utils/abis/uni_abi.json",
+                "contract": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+            }
+        }
+    },
     "AVAX": {
         "name": "Avalanche",
         "RPC": "https://api.avax.network/ext/bc/C/rpc",
@@ -34,4 +45,5 @@
             }
         }
     }
+    
 }
