@@ -21,8 +21,22 @@ var contractAddress = null;
 
 
 async function main () {
+    console.log("--------------------------------------------");
     chainConfiguration();
+    console.log("--------------------------------------------");
     exchangeConfiguration();
+    console.log("--------------------------------------------");
+    checkQuantityAndContract();
+    console.log("--------------------------------------------");
+
+    console.log("Setting up the contract with these values: ");
+    console.log("-Router address: " + contractAddress);
+    console.log("-Signer: " + signer.address);
+    const uniV2TypeContract = new ethers.Contract(contractAddress, abi, signer);
+    console.log("--------------------------------------------");
+    //console.log("Sending buy txn...");
+    //need to change the values inside, now they are static
+    //classicUniBuy(provider, signer, uniV2TypeContract);
 }
 
 async function chainConfiguration () {
@@ -77,15 +91,24 @@ async function exchangeConfiguration () {
     }else{
         console.log("Exchange slected " + exchange);
         console.log("Setting up the exchange abi");
-        abi = require(config[chain].Exchanges[exchange].abi);
+        let abiLocation = config[chain].Exchanges[exchange].abi;
+        console.log("Abi location: " + abiLocation);
+        abi = require(abiLocation);
         //Assign the contract address to a local variable
-        contractAddress = config[chain].Exchanges[exchange].Contract;
+        contractAddress = config[chain].Exchanges[exchange].contract;
+
     }
 }//End of exchange configuration
 
-// contractAddress and contract abi must be pulled from JSON file
-const uniV2TypeContract = new ethers.Contract(contractAddress, abi, signer);
-//console.log(uniV2TypeContract);
+async function checkQuantityAndContract(){
+    if(process.argv[4] && process.argv[5] ){
+        console.log("Quantity to buy: " + process.argv[4]);
+        console.log("Contract to buy: " + process.argv[5]);
+    }else{
+        console.log("Quantity or contract address fiels missing, exiting...");
+        process.exit(1);
+    }
+}
 
 const classicUniBuy = async (provider, signer, uniV2TypeContract) => {
     try{
