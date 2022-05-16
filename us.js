@@ -1,14 +1,12 @@
 const ethers = require("ethers");
 //Must figure out how to get the abis
-const abi = require("./utils/abis/uni_abi.json");
+// const abi = require("./utils/abis/uni_abi.json");
 const config = require("./utils/chain_infos.json");
 
 require("dotenv").config();
 
 // These must be pulled from config file
 
-const contractAddress = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
-const contractABI = abi;
 const pKey = process.env.PRIVATE_KEY;
 
 //These are global variables to not pass them around too much
@@ -17,11 +15,20 @@ var rpc = null;
 var signer = null;
 var provider = null;
 var chain = null;
+var exchange = null;
+var abi = null;
+var contractAddress = null;
+
+
+async function main () {
+    chainConfiguration();
+    exchangeConfiguration();
+}
 
 async function chainConfiguration () {
     // Check every key of the object (chain ticker) if it's equal to the selected one
     Object.keys(config).forEach(element => {
-        if(process.argv[2] && (process.argv[2]).toUpperCase() == element){
+        if(process.argv[2] && (process.argv[2]).toUpperCase() == (element).toUpperCase()){
             console.log("Chain: " + element );
             chain = element;
             rpc = config[element].RPC;
@@ -54,10 +61,30 @@ async function chainConfiguration () {
         }
     }
 } //End of chain configuration function
-chainConfiguration();
+
+async function exchangeConfiguration () {
+    // const abi = require();
+    // const contractABI = abi;
+    Object.keys(config[chain].Exchanges).forEach(element => {
+        if(process.argv[3] && (process.argv[3]).toUpperCase() == (element).toUpperCase()){
+            exchange = element;
+        }
+    });
+
+    if(exchange == null){
+        console.log("Error: Selected exchange is not avaiable or it's not spelled right");
+        process.exit(1)
+    }else{
+        console.log("Exchange slected " + exchange);
+        console.log("Setting up the exchange abi");
+        abi = require(config[chain].Exchanges[exchange].abi);
+        //Assign the contract address to a local variable
+        contractAddress = config[chain].Exchanges[exchange].Contract;
+    }
+}//End of exchange configuration
 
 // contractAddress and contract abi must be pulled from JSON file
-const uniV2TypeContract = new ethers.Contract(contractAddress, contractABI, signer);
+const uniV2TypeContract = new ethers.Contract(contractAddress, abi, signer);
 //console.log(uniV2TypeContract);
 
 const classicUniBuy = async (provider, signer, uniV2TypeContract) => {
@@ -86,3 +113,6 @@ const classicUniBuy = async (provider, signer, uniV2TypeContract) => {
 
 //Stopping the buy while I'm testing
 //classicUniBuy(provider, signer, uniV2TypeContract);
+
+
+main();

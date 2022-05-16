@@ -5,15 +5,15 @@
         "RPC": "https://mainnet.infura.io/v3/",
         "Backup-RPC": "https://mainnet.infura.io/v3/",
         "Exchanges": {
-            "UniV2":{
+            "UNIV2":{
                 "abi":"./utils/abis/uni_abi.json",
                 "contract": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
             },
-            "Sushi":{
+            "SUSHI":{
                 "abi":"./utils/abis/sushi_abi.json",
                 "contract": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F"
             },
-            "UniV3":{
+            "UNIV3":{
                 "abi":"./utils/abis/uniV3_abi.json",
                 "contract": "/"
             }
@@ -24,7 +24,7 @@
         "RPC": "https://eth-rinkeby.alchemyapi.io/v2/qqRGZbmWFrq-JdCqYI2avk1tMjtkZ_Dv",
         "Backup-RPC": "https://eth-rinkeby.alchemyapi.io/v2/qqRGZbmWFrq-JdCqYI2avk1tMjtkZ_Dv",
         "Exchanges": {
-            "UniV2":{
+            "UNIV2":{
                 "abi":"./utils/abis/uni_abi.json",
                 "contract": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
             }
@@ -35,11 +35,11 @@
         "RPC": "https://api.avax.network/ext/bc/C/rpc",
         "Backup-RPC": "https://api.avax.network/ext/bc/C/rpc",
         "Exchanges": {
-            "tj":{
+            "TJ":{
                 "abi":"./utils/abis/tj_abi.json",
                 "contract": "0x60aE616a2155Ee3d9A68541Ba4544862310933d4"
             },
-            "Sushi":{
+            "SUSHI":{
                 "abi":"./utils/abis/sushi_abi.json",
                 "contract": ""
             }
