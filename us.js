@@ -18,6 +18,11 @@ var chain = null;
 var exchange = null;
 var abi = null;
 var contractAddress = null;
+var ethQuantity = null;
+var contractToBuy = null;
+
+// Gas increment from the base gas fee -- !not working
+var addedGas = ethers.utils.formatUnits(10000, "gwei");
 
 
 async function main () {
@@ -36,7 +41,7 @@ async function main () {
     console.log("--------------------------------------------");
     //console.log("Sending buy txn...");
     //need to change the values inside, now they are static
-    //classicUniBuy(provider, signer, uniV2TypeContract);
+    classicUniBuy(provider, signer, uniV2TypeContract);
 }
 
 async function chainConfiguration () {
@@ -101,9 +106,11 @@ async function exchangeConfiguration () {
 }//End of exchange configuration
 
 async function checkQuantityAndContract(){
-    if(process.argv[4] && process.argv[5] ){
+    if(process.argv[4] && process.argv[5]){
         console.log("Quantity to buy: " + process.argv[4]);
+        ethQuantity = process.argv[4];
         console.log("Contract to buy: " + process.argv[5]);
+        contractToBuy = process.argv[5];
     }else{
         console.log("Quantity or contract address fiels missing, exiting...");
         process.exit(1);
@@ -112,23 +119,31 @@ async function checkQuantityAndContract(){
 
 const classicUniBuy = async (provider, signer, uniV2TypeContract) => {
     try{
+        //Get the gas estimate from the rpc
+        //Questo ritorna un bignumber
+        let gasEstimate = await provider.getGasPrice()
+        //Questo ritorna una stringa e funziona
+        gasEstimateGwei = ethers.utils.parseUnits("2.0", "gwei");
+        console.log(gasEstimateGwei);
+
         //override is basically used to add (override) gas settings, value, ect..
         let overrides = {
-            value: ethers.utils.parseEther("0.001"),
-            gasPrice: ethers.utils.parseEther("0.0000000123"),
+            value: ethers.utils.parseEther(ethQuantity),
+            gasPrice: gasEstimateGwei,
             gasLimit: 500000
         }
+
         //sends the transaction
         responseTxn = await uniV2TypeContract.swapExactETHForTokens(
             1,
-            ["0xc778417E063141139Fce010982780140Aa0cD5Ab", "0xE6dfa2B48d9ACe62Ff4fe6c1ce0F2c7034886023"],
-            "0x62791F0853Bba37983a4004ca9562f45c0df1210",
+            [config[chain].WETH, contractToBuy],
+            signer.address,
             1000000000000,
             overrides
         );
         await responseTxn.wait();
 
-        console.log("our call worked, call response ", responseTxn);
+        console.log("Our call worked, call response ", responseTxn);
     }catch(e){
         console.log(e);
     }

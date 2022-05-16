@@ -4,6 +4,7 @@
         "name": "Ethereum",
         "RPC": "https://mainnet.infura.io/v3/",
         "Backup-RPC": "https://mainnet.infura.io/v3/",
+        "WETH": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
         "Exchanges": {
             "UNIV2":{
                 "abi":"./utils/abis/uni_abi.json",
@@ -23,6 +24,7 @@
         "name": "Ethereum Rinkeby testnet",
         "RPC": "https://eth-rinkeby.alchemyapi.io/v2/qqRGZbmWFrq-JdCqYI2avk1tMjtkZ_Dv",
         "Backup-RPC": "https://eth-rinkeby.alchemyapi.io/v2/qqRGZbmWFrq-JdCqYI2avk1tMjtkZ_Dv",
+        "WETH": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
         "Exchanges": {
             "UNIV2":{
                 "abi":"./utils/abis/uni_abi.json",
@@ -34,6 +36,7 @@
         "name": "Avalanche",
         "RPC": "https://api.avax.network/ext/bc/C/rpc",
         "Backup-RPC": "https://api.avax.network/ext/bc/C/rpc",
+        "WETH": "--",
         "Exchanges": {
             "TJ":{
                 "abi":"./utils/abis/tj_abi.json",
