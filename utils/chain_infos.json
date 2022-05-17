@@ -8,15 +8,18 @@
         "Exchanges": {
             "UNIV2":{
                 "abi":"./utils/abis/uni_abi.json",
-                "contract": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+                "contract": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+                "standard": true
             },
             "SUSHI":{
                 "abi":"./utils/abis/sushi_abi.json",
-                "contract": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F"
+                "contract": "0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F",
+                "standard": true
             },
             "UNIV3":{
                 "abi":"./utils/abis/uniV3_abi.json",
-                "contract": "/"
+                "contract": "/",
+                "standard": false
             }
         }
     },
@@ -28,7 +31,8 @@
         "Exchanges": {
             "UNIV2":{
                 "abi":"./utils/abis/uni_abi.json",
-                "contract": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+                "contract": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+                "standard": true
             }
         }
     },
@@ -36,15 +40,17 @@
         "name": "Avalanche",
         "RPC": "https://api.avax.network/ext/bc/C/rpc",
         "Backup-RPC": "https://api.avax.network/ext/bc/C/rpc",
-        "WETH": "--",
+        "WETH": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
         "Exchanges": {
             "TJ":{
                 "abi":"./utils/abis/tj_abi.json",
-                "contract": "0x60aE616a2155Ee3d9A68541Ba4544862310933d4"
+                "contract": "0x60aE616a2155Ee3d9A68541Ba4544862310933d4",
+                "standard": false
             },
             "SUSHI":{
                 "abi":"./utils/abis/sushi_abi.json",
-                "contract": ""
+                "contract": "",
+                "standard": true
             }
         }
     }

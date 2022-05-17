@@ -1,16 +1,10 @@
 const ethers = require("ethers");
-//Must figure out how to get the abis
-// const abi = require("./utils/abis/uni_abi.json");
 const config = require("./utils/chain_infos.json");
-
 require("dotenv").config();
-
-// These must be pulled from config file
-
 const pKey = process.env.PRIVATE_KEY;
 
 //These are global variables to not pass them around too much
-//They won't be changed after they are initialized
+//They won't be changed after they are set from the input
 var rpc = null;
 var signer = null;
 var provider = null;
@@ -20,10 +14,13 @@ var abi = null;
 var contractAddress = null;
 var ethQuantity = null;
 var contractToBuy = null;
+var gasOverrides = false;
+var gasValue = null;
 
-// Gas increment from the base gas fee -- !not working
-var addedGas = ethers.utils.formatUnits(10000, "gwei");
-
+// CHANGE HERE THE GAS INCREMENT 
+var gasToAddTimesGwei = /*This value -> */ 10 /* <- This value */  * 1000000000;
+var addedGas = ethers.BigNumber.from(gasToAddTimesGwei.toString());
+// CHANGE HERE THE GAS INCREMENT
 
 async function main () {
     console.log("--------------------------------------------");
@@ -41,8 +38,18 @@ async function main () {
     console.log("--------------------------------------------");
     //console.log("Sending buy txn...");
     //need to change the values inside, now they are static
-    classicUniBuy(provider, signer, uniV2TypeContract);
-}
+    console.log("Standard uniswap router? "+ config[chain].Exchanges[exchange].standard);
+    if(config[chain].Exchanges[exchange].standard){
+        standardUniBuy(provider, signer, uniV2TypeContract);
+    }else{
+        //Add here diffrent cases
+        //Check the chain and the exchange to be sure
+        if(exchange.toUpperCase() == "TJ"){
+            traderJoeBuy(provider, signer, uniV2TypeContract);
+        } 
+        //more can be added, uniV3 etc
+    }
+}//End of main function
 
 async function chainConfiguration () {
     // Check every key of the object (chain ticker) if it's equal to the selected one
@@ -82,8 +89,6 @@ async function chainConfiguration () {
 } //End of chain configuration function
 
 async function exchangeConfiguration () {
-    // const abi = require();
-    // const contractABI = abi;
     Object.keys(config[chain].Exchanges).forEach(element => {
         if(process.argv[3] && (process.argv[3]).toUpperCase() == (element).toUpperCase()){
             exchange = element;
@@ -101,7 +106,6 @@ async function exchangeConfiguration () {
         abi = require(abiLocation);
         //Assign the contract address to a local variable
         contractAddress = config[chain].Exchanges[exchange].contract;
-
     }
 }//End of exchange configuration
 
@@ -115,21 +119,30 @@ async function checkQuantityAndContract(){
         console.log("Quantity or contract address fiels missing, exiting...");
         process.exit(1);
     }
-}
+    //Check if the gas field is present
+    if(process.argv[6]){
+        gasValue = process.argv[6];
+        console.log("Gas overrides with value " + gasValue);
+        gasOverrides = true;
+    }
+}//End of checkQuantityAndContract function
 
-const classicUniBuy = async (provider, signer, uniV2TypeContract) => {
+const standardUniBuy = async (provider, signer, uniV2TypeContract) => {
     try{
         //Get the gas estimate from the rpc
-        //Questo ritorna un bignumber
+        //Returns a bignumber
         let gasEstimate = await provider.getGasPrice()
-        //Questo ritorna una stringa e funziona
-        gasEstimateGwei = ethers.utils.parseUnits("2.0", "gwei");
+        console.log("gas estimate... " + gasEstimate);
+        console.log("Gas to add... " + addedGas);
+        //Adding gas to the estimate gas
+        gasEstimateGwei = gasEstimate.add(addedGas);
         console.log(gasEstimateGwei);
 
         //override is basically used to add (override) gas settings, value, ect..
         let overrides = {
             value: ethers.utils.parseEther(ethQuantity),
-            gasPrice: gasEstimateGwei,
+            // If gasOverrides is true it will use the input value set by the user
+            gasPrice: gasOverrides ? ethers.utils.parseUnits(gasValue, "gwei") : gasEstimateGwei,
             gasLimit: 500000
         }
 
@@ -147,10 +160,38 @@ const classicUniBuy = async (provider, signer, uniV2TypeContract) => {
     }catch(e){
         console.log(e);
     }
-}
+}//End of standardUniBuy
 
-//Stopping the buy while I'm testing
-//classicUniBuy(provider, signer, uniV2TypeContract);
+async function traderJoeBuy(provider, signer, uniV2TypeContract){
+    try{
+        //Get the gas estimate from the rpc
+        //Returns a bignumber
+        let gasEstimate = await provider.getGasPrice()
+        //Questo ritorna una stringa e funziona
+        gasEstimateGwei = gasEstimate.add(addedGas);
+        console.log(gasEstimateGwei);
 
+        //override is basically used to add (override) gas settings, value, ect..
+        let overrides = {
+            value: ethers.utils.parseEther(ethQuantity),
+            gasPrice: gasOverrides ? ethers.utils.parseUnits(gasValue, "gwei") : gasEstimateGwei,
+            gasLimit: 500000
+        }
+
+        //sends the transaction
+        responseTxn = await uniV2TypeContract.swapExactAVAXForTokens(
+            1,
+            [config[chain].WETH, contractToBuy],
+            signer.address,
+            1000000000000,
+            overrides
+        );
+        await responseTxn.wait();
+
+        console.log("Our call worked, call response ", responseTxn);
+    }catch(e){
+        console.log(e);
+    }
+}//End of traderJoeBuy
 
 main();
