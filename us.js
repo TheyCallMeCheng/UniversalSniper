@@ -1,12 +1,15 @@
 const ethers = require("ethers");
 const config = require("./utils/chain_infos.json");
 require("dotenv").config();
+//Add as many as you wish to have configured
 const pKey = process.env.PRIVATE_KEY;
+const pKeys = [process.env.PRIVATE_KEY, process.env.PRIVATE_KEY_2, /* PRIVATE_KEY_3, etc... */];
 
 //These are global variables to not pass them around too much
 //They won't be changed after they are set from the input
 var rpc = null;
 var signer = null;
+const signers = [];
 var provider = null;
 var chain = null;
 var exchange = null;
@@ -23,6 +26,7 @@ var addedGas = ethers.BigNumber.from(gasToAddTimesGwei.toString());
 // CHANGE HERE THE GAS INCREMENT
 
 async function main () {
+    console.log(process.env)
     console.log("--------------------------------------------");
     chainConfiguration();
     console.log("--------------------------------------------");
@@ -80,7 +84,13 @@ async function chainConfiguration () {
         if(pKey !== undefined){ 
             //Setting up the signer with private key and the provider
             signer = new ethers.Wallet(pKey, provider);
+            //remember to add forEach(pkeys) { create x signers }
+            signer2 = new ethers.Wallet(pKeys[1], provider);
             console.log("Configured account: " + signer.address + " on network: " + chain);
+            pKeys.forEach(element => {
+                let temp = signers.push(new ethers.Wallet(element, provider));
+                console.log("Configured account: " + temp + " on network: " + chain);
+            });
         }else{
             console.log("Private key missing, make sure you setup .env correctly ");
             process.exit(1);
@@ -137,6 +147,8 @@ const standardUniBuy = async (provider, signer, uniV2TypeContract) => {
         //Adding gas to the estimate gas
         gasEstimateGwei = gasEstimate.add(addedGas);
         console.log(gasEstimateGwei);
+        //Add swap data in a variable to reuse code
+        const swapData = "";
 
         //override is basically used to add (override) gas settings, value, ect..
         let overrides = {
@@ -147,16 +159,22 @@ const standardUniBuy = async (provider, signer, uniV2TypeContract) => {
         }
 
         //sends the transaction
-        responseTxn = await uniV2TypeContract.swapExactETHForTokens(
+        responseTxn = uniV2TypeContract.connect(signers[0]).swapExactETHForTokens(
             1,
             [config[chain].WETH, contractToBuy],
             signer.address,
             1000000000000,
             overrides
         );
-        await responseTxn.wait();
+        responseTxn2 = uniV2TypeContract.connect(signers[1]).swapExactETHForTokens(
+            1,
+            [config[chain].WETH, contractToBuy],
+            signer.address,
+            1000000000000,
+            overrides
+        );
 
-        console.log("Our call worked, call response ", responseTxn);
+        console.log("Our call worked, call response ", responseTxn2);
     }catch(e){
         console.log(e);
     }
