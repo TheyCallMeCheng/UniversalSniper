@@ -18,7 +18,7 @@ var gasOverrides = false;
 var gasValue = null;
 
 // CHANGE HERE THE GAS INCREMENT 
-var gasToAddTimesGwei = /*This value -> */ 10 /* <- This value */  * 1000000000;
+var gasToAddTimesGwei = /*This value -> */ 5 /* <- This value */  * 1000000000;
 var addedGas = ethers.BigNumber.from(gasToAddTimesGwei.toString());
 // CHANGE HERE THE GAS INCREMENT
 
