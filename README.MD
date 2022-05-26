@@ -28,7 +28,7 @@ FOR TESTING PURPOSES ONLY IM BUYING THIS CONTRACT
 
 ### EXCHANGES TESTED:
 - [x] Uniswap v2 Rinkeby testnet (ticker rETH)
-- [x] Traderjoe on Avalanche
+- [] Traderjoe on Avalanche
 - [ ] Uniswap v2 Ethereum
 - [ ] Sushiswap on Eth
 ... more to come

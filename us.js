@@ -48,7 +48,7 @@ async function main () {
         //Add here diffrent cases
         //Check the chain and the exchange to be sure
         if(exchange.toUpperCase() == "TJ"){
-            traderJoeBuy(provider, signer, uniV2TypeContract);
+            traderJoeBuy(provider, signers, uniV2TypeContract);
         } 
         //more can be added, uniV3 etc
     }
@@ -144,8 +144,6 @@ const standardUniBuy = async (provider, signers, uniV2TypeContract) => {
         //Adding gas to the estimate gas
         gasEstimateGwei = gasEstimate.add(addedGas);
         console.log(gasEstimateGwei);
-        //Add swap data in a variable to reuse code
-        const swapData = "";
 
         //override is basically used to add (override) gas settings, value, ect..
         let overrides = {
@@ -159,13 +157,17 @@ const standardUniBuy = async (provider, signers, uniV2TypeContract) => {
         // foreach signer we send a buy transaction
         signers.forEach(element => {
             if(counter < numberOfAccounts){
-                uniV2TypeContract.connect(element).swapExactETHForTokens(
-                    1,
-                    [config[chain].WETH, contractToBuy],
-                    element.address,
-                    1000000000000,
-                    overrides
-                );
+                try{
+                    uniV2TypeContract.connect(element).swapExactETHForTokens(
+                        1,
+                        [config[chain].WETH, contractToBuy],
+                        element.address,
+                        1000000000000,
+                        overrides
+                    );
+                }catch(e){
+                    console.log("Error occurred with signer " + element.address )
+                }
             }
             counter++;
         });
@@ -177,7 +179,7 @@ const standardUniBuy = async (provider, signers, uniV2TypeContract) => {
     }
 }//End of standardUniBuy
 
-async function traderJoeBuy(provider, signer, uniV2TypeContract){
+async function traderJoeBuy(provider, signers, uniV2TypeContract){
     try{
         //Get the gas estimate from the rpc
         //Returns a bignumber
@@ -193,17 +195,26 @@ async function traderJoeBuy(provider, signer, uniV2TypeContract){
             gasLimit: 500000
         }
 
-        //sends the transaction
-        responseTxn = await uniV2TypeContract.swapExactAVAXForTokens(
-            1,
-            [config[chain].WETH, contractToBuy],
-            signer.address,
-            1000000000000,
-            overrides
-        );
-        await responseTxn.wait();
+        let counter = 0;
+        // foreach signer we send a buy transaction
+        signers.forEach(element => {
+            if(counter < numberOfAccounts){
+                try{
+                    uniV2TypeContract.connect(element).swapExactETHForTokens(
+                        1,
+                        [config[chain].WETH, contractToBuy],
+                        element.address,
+                        1000000000000,
+                        overrides
+                    );
+                }catch(e){
+                    console.log("Error occurred with signer " + element.address )
+                }
+            }
+            counter++;
+        });
 
-        console.log("Our call worked, call response ", responseTxn);
+        console.log("Our call worked, call response ");
     }catch(e){
         console.log(e);
     }
