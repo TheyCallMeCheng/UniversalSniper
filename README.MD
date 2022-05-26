@@ -3,7 +3,7 @@
 Work in progress...
 
 To launch:
-'' node us.js [chain] [exchange] [ethValue] [contractToBuy] [number-of-accounts] (override)[gasPriceGwei]''
+``` node us.js [chain] [exchange] [ethValue] [contractToBuy] [number-of-accounts] (override)[gasPriceGwei] ```
 
 To setup:
 - npm install
