@@ -2,6 +2,9 @@
 
 Work in progress...
 
+To launch:
+'' node us.js [chain] [exchange] [ethValue] [contractToBuy] [number-of-accounts] (override)[gasPriceGwei]''
+
 To setup:
 - npm install
 - create .env file with the variable "PRIVATE_KEY"

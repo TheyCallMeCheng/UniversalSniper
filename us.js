@@ -2,13 +2,11 @@ const ethers = require("ethers");
 const config = require("./utils/chain_infos.json");
 require("dotenv").config();
 //Add as many as you wish to have configured
-const pKey = process.env.PRIVATE_KEY;
 const pKeys = [process.env.PRIVATE_KEY, process.env.PRIVATE_KEY_2, /* PRIVATE_KEY_3, etc... */];
 
 //These are global variables to not pass them around too much
 //They won't be changed after they are set from the input
 var rpc = null;
-var signer = null;
 const signers = [];
 var provider = null;
 var chain = null;
@@ -19,6 +17,7 @@ var ethQuantity = null;
 var contractToBuy = null;
 var gasOverrides = false;
 var gasValue = null;
+var numberOfAccounts = null;
 
 // CHANGE HERE THE GAS INCREMENT 
 var gasToAddTimesGwei = /*This value -> */ 5 /* <- This value */  * 1000000000;
@@ -37,14 +36,14 @@ async function main () {
 
     console.log("Setting up the contract with these values: ");
     console.log("-Router address: " + contractAddress);
-    console.log("-Signer: " + signer.address);
-    const uniV2TypeContract = new ethers.Contract(contractAddress, abi, signer);
+    //console.log("-Signer: " + signer.address);
+    const uniV2TypeContract = new ethers.Contract(contractAddress, abi, signers[0]);
     console.log("--------------------------------------------");
     //console.log("Sending buy txn...");
     //need to change the values inside, now they are static
     console.log("Standard uniswap router? "+ config[chain].Exchanges[exchange].standard);
     if(config[chain].Exchanges[exchange].standard){
-        standardUniBuy(provider, signer, uniV2TypeContract);
+        standardUniBuy(provider, signers, uniV2TypeContract);
     }else{
         //Add here diffrent cases
         //Check the chain and the exchange to be sure
@@ -81,13 +80,9 @@ async function chainConfiguration () {
             process.exit(1);
         }
         //just making sure the .env file is setup correctly
-        if(pKey !== undefined){ 
-            //Setting up the signer with private key and the provider
-            signer = new ethers.Wallet(pKey, provider);
-            //remember to add forEach(pkeys) { create x signers }
-            signer2 = new ethers.Wallet(pKeys[1], provider);
-            console.log("Configured account: " + signer.address + " on network: " + chain);
+        if(pKeys !== undefined){
             pKeys.forEach(element => {
+                //Setting up the signers array with private key and the provider
                 let temp = signers.push(new ethers.Wallet(element, provider));
                 console.log("Configured account: " + temp + " on network: " + chain);
             });
@@ -120,24 +115,26 @@ async function exchangeConfiguration () {
 }//End of exchange configuration
 
 async function checkQuantityAndContract(){
-    if(process.argv[4] && process.argv[5]){
+    if(process.argv[4] && process.argv[5] && process.argv[6]){
         console.log("Quantity to buy: " + process.argv[4]);
         ethQuantity = process.argv[4];
         console.log("Contract to buy: " + process.argv[5]);
         contractToBuy = process.argv[5];
+        console.log("Number of accounts to buy with: " + process.argv[6]);
+        numberOfAccounts = process.argv[6];
     }else{
         console.log("Quantity or contract address fiels missing, exiting...");
         process.exit(1);
     }
     //Check if the gas field is present
-    if(process.argv[6]){
-        gasValue = process.argv[6];
+    if(process.argv[7]){
+        gasValue = process.argv[7];
         console.log("Gas overrides with value " + gasValue);
         gasOverrides = true;
     }
 }//End of checkQuantityAndContract function
 
-const standardUniBuy = async (provider, signer, uniV2TypeContract) => {
+const standardUniBuy = async (provider, signers, uniV2TypeContract) => {
     try{
         //Get the gas estimate from the rpc
         //Returns a bignumber
@@ -157,24 +154,24 @@ const standardUniBuy = async (provider, signer, uniV2TypeContract) => {
             gasPrice: gasOverrides ? ethers.utils.parseUnits(gasValue, "gwei") : gasEstimateGwei,
             gasLimit: 500000
         }
-
-        //sends the transaction
-        responseTxn = uniV2TypeContract.connect(signers[0]).swapExactETHForTokens(
-            1,
-            [config[chain].WETH, contractToBuy],
-            signer.address,
-            1000000000000,
-            overrides
-        );
-        responseTxn2 = uniV2TypeContract.connect(signers[1]).swapExactETHForTokens(
-            1,
-            [config[chain].WETH, contractToBuy],
-            signer.address,
-            1000000000000,
-            overrides
-        );
-
-        console.log("Our call worked, call response ", responseTxn2);
+        
+        let counter = 0;
+        // foreach signer we send a buy transaction
+        signers.forEach(element => {
+            if(counter < numberOfAccounts){
+                uniV2TypeContract.connect(element).swapExactETHForTokens(
+                    1,
+                    [config[chain].WETH, contractToBuy],
+                    element.address,
+                    1000000000000,
+                    overrides
+                );
+            }
+            counter++;
+        });
+        
+        //Need to implement transaction recipt outcome
+        console.log("Our call worked, call response ");
     }catch(e){
         console.log(e);
     }
