@@ -200,7 +200,7 @@ async function traderJoeBuy(provider, signers, uniV2TypeContract){
         signers.forEach(element => {
             if(counter < numberOfAccounts){
                 try{
-                    uniV2TypeContract.connect(element).swapExactETHForTokens(
+                    uniV2TypeContract.connect(element).swapExactAVAXForTokens(
                         1,
                         [config[chain].WETH, contractToBuy],
                         element.address,

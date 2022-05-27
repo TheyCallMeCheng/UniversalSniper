@@ -2,7 +2,9 @@
 
 Work in progress...
 
-To launch:
+To launch: 
+
+
 ``` node us.js [chain] [exchange] [ethValue] [contractToBuy] [number-of-accounts] (override)[gasPriceGwei] ```
 
 To setup:
@@ -28,7 +30,7 @@ FOR TESTING PURPOSES ONLY IM BUYING THIS CONTRACT
 
 ### EXCHANGES TESTED:
 - [x] Uniswap v2 Rinkeby testnet (ticker rETH)
-- [] Traderjoe on Avalanche
+- [ ] Traderjoe on Avalanche
 - [ ] Uniswap v2 Ethereum
 - [ ] Sushiswap on Eth
 ... more to come
